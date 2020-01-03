@@ -1,0 +1,20 @@
+	<td id="{{ user.id }}" onclick="location.href='../'"
+						style="text-align:center;
+						vertical-align: middle;
+						cursor: pointer;
+						font-size:15px;
+						text-decoration: none;
+						padding:0px 25px;
+						color:#000000;
+						background-color: #e66767"
+					>Удалить</td>
+					<td id="{{ user.id }}" onclick="location.href='../'"
+						style="text-align:center;
+						vertical-align: middle;
+						cursor: pointer;
+						font-size:15px;
+						text-decoration: none;
+						padding:0px 25px;
+						color:#000000;
+						background-color: #80ba9c"
+					>Редактировать</td>

@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="{% static "/style.css" %}" type="text/css">
+		<title>Список лиц допущенных до управления шлагбаумом</title>
+	</head>
+	<body>
+		<table>
+			<thead>
+				<tr>
+					<th>Номер</th>
+					<th>Имя</th>
+					<th>Фамилия</th>
+					<th>кол-во проездов</th>
+					<th>Время С</th>
+					<th>Время До</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<form method="POST">
+                	{% csrf_token %}
+					{% for user in edit_form %}
+					<td><input type="text" size="20" value={{user.phone_number}} name="phone_number"></td>
+					<td><input type="text" size="20" value={{user.firstname}} name="firstname"></td>
+					<td><input type="text" size="20" value={{user.lastname}}  name="lastname"></td>
+					<td><input type="text" size="20" value={{user.entry_counter}}  name="entry_counter"></td>
+					<td><input type="text" size="20" value={{user.start_time}}  name="start_time"></td>
+					<td><input type="text" size="20" value={{user.end_time}}  name="end_time"></td>
+		            {% endfor %}
+					<td><button type="submit" name='update_user'>Изменить</button></td>
+					</form>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+</html>
