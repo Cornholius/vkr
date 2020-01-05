@@ -23,18 +23,23 @@
 				<tr>
 					<form method="POST">
                 	{% csrf_token %}
-					{% for user in edit_form %}
-					<td><input type="text" size="20" value={{user.phone_number}} name="phone_number"></td>
-					<td><input type="text" size="20" value={{user.firstname}} name="firstname"></td>
-					<td><input type="text" size="20" value={{user.lastname}}  name="lastname"></td>
-					<td><input type="text" size="20" value={{user.entry_counter}}  name="entry_counter"></td>
-					<td><input type="text" size="20" value={{user.start_time}}  name="start_time"></td>
-					<td><input type="text" size="20" value={{user.end_time}}  name="end_time"></td>
-		            {% endfor %}
+					<td>{{edit_form.phone_number}}</td>
+					<td>{{edit_form.firstname}}</td>
+					<td>{{edit_form.lastname}}</td>
+					<td>{{edit_form.entry_counter}}</td>
+					<td>{{edit_form.start_time}}</td>
+					<td>{{edit_form.end_time}}</td>
 					<td><button type="submit" name='update_user'>Изменить</button></td>
 					</form>
 				</tr>
 			</tbody>
 		</table>
+<!--		<table>-->
+<!--			<form method="POST">-->
+<!--            {% csrf_token %}-->
+<!--			{{edit_form.phone_number}}-->
+<!--			<td><button type="submit" name='update_user'>Изменить</button></td>-->
+<!--			</form>-->
+<!--		</table>-->
 	</body>
 </html>

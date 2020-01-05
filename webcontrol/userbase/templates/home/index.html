@@ -7,7 +7,6 @@
 		<title>Список лиц допущенных до управления шлагбаумом</title>
 	</head>
 	<body>
-
 		<table>
 			<thead>
 				<tr>
@@ -24,15 +23,14 @@
 			<tr>
 				<form method="POST">
 					{% csrf_token %}
-					<td><input type="text" size="20" name="phone_number"></td>
-					<td><input type="text" size="20" name="firstname"></td>
-					<td><input type="text" size="20" name="lastname"></td>
-					<td><input type="text" size="20" name="entry_counter"></td>
-					<td><input type="text" size="20" name="start_time"></td>
-					<td><input type="text" size="20" name="end_time"></td>
+					<td>{{add_user.phone_number}}</td>
+					<td>{{add_user.firstname}}</td>
+					<td>{{add_user.lastname}}</td>
+					<td>{{add_user.entry_counter}}</td>
+					<td>{{add_user.start_time}}</td>
+					<td>{{add_user.end_time}}</td>
 					<td><button type="submit" name='add_button_id'>Добавить</button></td>
 				</form>
-
 			</tr>
 			</tbody>
 		</table>
@@ -72,10 +70,8 @@
             {% endfor %}
 
 		</table>
-		{% if msg %}
-			<script>
-				alert({{ msg }});
-			</script>
+		{% if data_entry_error %}
+			<script>alert("{{data_entry_error}}")</script>
 		{% endif %}
 	</body>
 </html>
