@@ -34,12 +34,8 @@
 				</tr>
 			</tbody>
 		</table>
-<!--		<table>-->
-<!--			<form method="POST">-->
-<!--            {% csrf_token %}-->
-<!--			{{edit_form.phone_number}}-->
-<!--			<td><button type="submit" name='update_user'>Изменить</button></td>-->
-<!--			</form>-->
-<!--		</table>-->
+		{% if data_entry_error %}
+			<script>alert("{{data_entry_error}}")</script>
+		{% endif %}
 	</body>
 </html>

@@ -3,6 +3,7 @@ from django.views.generic import View
 from .models import Users
 from .forms import UserForm
 import re
+from django.views.decorators.csrf import csrf_exempt
 
 
 class UserView(View):
@@ -27,17 +28,23 @@ class UserView(View):
                           {'users': users,
                            'add_user': UserForm,
                            'data_entry_error': 'Запись не добавлена. Проверьте правильность ввода номера'})
-
-        Users.objects.create(
-            phone_number=phone_number,
-            firstname=firstname,
-            lastname=lastname,
-            entry_counter=entry_counter,
-            start_time=start_time,
-            end_time=end_time)
-        return render(request, 'home/index.html',
-                      {'users': users,
-                       'add_user': UserForm})
+        try:
+            if phone_number == Users.objects.get(phone_number=phone_number).phone_number:
+                return render(request, 'home/index.html',
+                              {'users': users,
+                               'add_user': UserForm,
+                               'data_entry_error': 'Такой номер уже есть в базе'})
+        except:
+            Users.objects.create(
+                phone_number=phone_number,
+                firstname=firstname,
+                lastname=lastname,
+                entry_counter=entry_counter,
+                start_time=start_time,
+                end_time=end_time)
+            return render(request, 'home/index.html',
+                          {'users': users,
+                           'add_user': UserForm})
 
 
 class EditView(View):
@@ -55,11 +62,19 @@ class EditView(View):
         entry_counter = str(request.POST.get("entry_counter"))
         start_time = str(request.POST.get("start_time"))
         end_time = str(request.POST.get("end_time"))
-        Users.objects.filter(id=int(button_id)).update(
-            phone_number=phone_number,
-            firstname=firstname,
-            lastname=lastname,
-            entry_counter=entry_counter,
-            start_time=start_time,
-            end_time=end_time)
-        return redirect('../')
+        if Users.objects.get(phone_number=phone_number).id == button_id:
+            Users.objects.filter(id=int(button_id)).update(
+                phone_number=phone_number,
+                firstname=firstname,
+                lastname=lastname,
+                entry_counter=entry_counter,
+                start_time=start_time,
+                end_time=end_time)
+
+            return redirect('../')
+        else:
+            edit_user = Users.objects.filter(id=request.GET.get('edit_button_id'))
+            form = UserForm(edit_user.values()[0])
+            return render(request, 'edit/index.html', {'edit_form': form,
+                                                       'data_entry_error': 'Вы пытаетесь создать в базе две'
+                                                                           ' записи с одинаковым номером.'})
