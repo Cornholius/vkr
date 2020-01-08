@@ -3,12 +3,18 @@ from django.views.generic import View
 from .models import Users
 from .forms import UserForm
 import re
-from django.views.decorators.csrf import csrf_exempt
 
 
 class UserView(View):
 
+    def delete_from_sms(self, request):
+        phone_number = request.GET.get('phone_number')
+        Users.objects.filter(phone_number=phone_number).delete()
+
     def get(self, request):
+        if request.GET.get('delete_from_sms') == 'del':
+            self.delete_from_sms(request)
+
         users = Users.objects.all()
         delete_button_id = request.GET.get('delete_button_id')
         Users.objects.filter(id=delete_button_id).delete()
