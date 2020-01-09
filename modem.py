@@ -10,13 +10,21 @@ PORT = 'COM5'
 BAUDRATE = 115200
 
 
-def sms_open_barrier():
-    GPIO.setmod(GPIO.BCM)
-    GPIO.setup(24, GPIO.OUT)
-    GPIO.output(7, True)
-    sleep(0.5)
-    GPIO.output(7, False)
-    GPIO.cleanup()
+def sms_open_barrier(sms):
+
+    """проверить работу функции. отправляет запрос в джанго, там вьюха перехватывает,
+        сверяет в базе время и номер, если всё совпадает - открывает шлагбаум"""
+
+    url = 'http://127.0.0.1/'
+    number = sms.number
+    params = {'open_from_sms': 'open', 'phone_number': number}
+    r = requests.get(url=url, params=params)
+    # GPIO.setmod(GPIO.BCM)
+    # GPIO.setup(24, GPIO.OUT)
+    # GPIO.output(7, True)
+    # sleep(0.5)
+    # GPIO.output(7, False)
+    # GPIO.cleanup()
 
 
 def sms_add_user(sms):
@@ -42,7 +50,7 @@ def sms_catcher(sms):
     check_del_number = re.match(r'^Del\s{1}[+]{1}[0-9]{11}$', sms.text)
 
     if check_open_barrier == 'Open' or 'open':
-        sms_open_barrier()
+        sms_open_barrier(sms)
 
     if check_add_number != None:
         sms_add_user(sms)
