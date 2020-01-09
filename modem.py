@@ -1,7 +1,5 @@
 from __future__ import print_function
 from gsmmodem.modem import GsmModem
-# import RPi.GPIO as GPIO
-from time import sleep
 import requests
 import re
 
@@ -9,6 +7,9 @@ import re
 PORT = 'COM5'
 BAUDRATE = 115200
 url = 'http://127.0.0.1/'
+admin_phone = ['+79312534981'
+               ]
+
 
 def sms_open_barrier(sms):
     number = sms.number
@@ -16,14 +17,15 @@ def sms_open_barrier(sms):
     r = requests.get(url=url, params=params)
 
 
-def sms_add_user(sms):
-    client = requests.session()
-    client.get(url)
-    csrftoken = client.cookies['csrftoken']
-    login_data = {'phone_number': sms.text[4:], 'firstname': '', 'lastname': '',
-                  'entry_counter': '', 'start_time': '', 'end_time': '',
-                  'csrfmiddlewaretoken': csrftoken}
-    r = client.post(url, data=login_data)
+def sms_add_number(sms):
+    if sms.number in admin_phone:
+        client = requests.session()
+        client.get(url)
+        csrftoken = client.cookies['csrftoken']
+        login_data = {'phone_number': sms.text[4:], 'firstname': '', 'lastname': '',
+                      'entry_counter': '', 'start_time': '', 'end_time': '',
+                      'csrfmiddlewaretoken': csrftoken}
+        r = client.post(url, data=login_data)
 
 
 def sms_del_number(check_del_number):
@@ -41,7 +43,7 @@ def sms_catcher(sms):
         sms_open_barrier(sms)
 
     if check_add_number is not None:
-        sms_add_user(sms)
+        sms_add_number(sms)
 
     if check_del_number is not None:
         sms_del_number(check_del_number)

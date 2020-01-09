@@ -21,20 +21,22 @@ class UserView(View):
         time_to = Users.objects.get(phone_number=phone_number).end_time
         entry_counter = Users.objects.get(phone_number=phone_number).entry_counter
         time_now = datetime.datetime.now().strftime('%H')
+        if time_with == '': time_with = 0
+        if time_to == '': time_to = 24
+        if entry_counter == '': entry_counter = -1
         if user is not None:
-            if int(time_with) < int(time_now) < int(time_to) or time_with == '' and time_to == '':
-                if int(entry_counter) > 0 or entry_counter == '':
-                    if entry_counter != '':
-                        count = int(entry_counter)
-                        count -= 1
-                        Users.objects.filter(phone_number=phone_number).update(entry_counter=count)
-                    # GPIO.setmod(GPIO.BCM)
-                    # GPIO.setup(24, GPIO.OUT)
-                    # GPIO.output(7, True)
-                    # sleep(0.5)
-                    # GPIO.output(7, False)
-                    # GPIO.cleanup()
-                    print("test passed")
+            if int(time_with) < int(time_now) < int(time_to):
+                if int(entry_counter) > 0:
+                    count = int(entry_counter)
+                    count -= 1
+                    Users.objects.filter(phone_number=phone_number).update(entry_counter=count)
+                # GPIO.setmod(GPIO.BCM)
+                # GPIO.setup(24, GPIO.OUT)
+                # GPIO.output(7, True)
+                # sleep(0.5)
+                # GPIO.output(7, False)
+                # GPIO.cleanup()
+                print("test passed")
 
         else:
             print('заглушка: нет в списке')
@@ -53,12 +55,12 @@ class UserView(View):
         print(request.POST)
         print(request.POST.get('sms_add_user'))
         users = Users.objects.all()
-        phone_number = str(request.POST.get("phone_number"))
-        firstname = str(request.POST.get("firstname"))
-        lastname = str(request.POST.get("lastname"))
-        entry_counter = str(request.POST.get("entry_counter"))
-        start_time = str(request.POST.get("start_time"))
-        end_time = str(request.POST.get("end_time"))
+        phone_number = request.POST.get("phone_number")
+        firstname = request.POST.get("firstname")
+        lastname = request.POST.get("lastname")
+        entry_counter = request.POST.get("entry_counter")
+        start_time = request.POST.get("start_time")
+        end_time = request.POST.get("end_time")
         check_number = re.match(r'^[+]{1}[0-9]{11}$', phone_number)
         if check_number is None:
             return render(request, 'home/index.html',
@@ -99,7 +101,7 @@ class EditView(View):
         entry_counter = str(request.POST.get("entry_counter"))
         start_time = str(request.POST.get("start_time"))
         end_time = str(request.POST.get("end_time"))
-        if Users.objects.get(phone_number=phone_number).id == button_id:
+        if Users.objects.get(phone_number=phone_number).id == int(button_id):
             Users.objects.filter(id=int(button_id)).update(
                 phone_number=phone_number,
                 firstname=firstname,
@@ -107,7 +109,6 @@ class EditView(View):
                 entry_counter=entry_counter,
                 start_time=start_time,
                 end_time=end_time)
-
             return redirect('../')
         else:
             edit_user = Users.objects.filter(id=request.GET.get('edit_button_id'))
