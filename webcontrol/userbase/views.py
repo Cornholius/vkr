@@ -14,7 +14,6 @@ class UserView(View):
     def get(self, request):
         if request.GET.get('delete_from_sms') == 'del':
             self.delete_from_sms(request)
-
         users = Users.objects.all()
         delete_button_id = request.GET.get('delete_button_id')
         Users.objects.filter(id=delete_button_id).delete()
