@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect
 from django.views.generic import View
 from .models import Users
 from .forms import UserForm
+# import RPi.GPIO as GPIO
 import re
+from time import sleep
+import datetime
 
 
 class UserView(View):
@@ -13,13 +16,33 @@ class UserView(View):
 
     def open_from_sms(self, request):
         phone_number = request.GET.get('phone_number')
-        qwe = Users.objects.filter(phone_number=phone_number)
+        user = Users.objects.filter(phone_number=phone_number).first()
+        time_with = Users.objects.get(phone_number=phone_number).start_time
+        time_to = Users.objects.get(phone_number=phone_number).end_time
+        entry_counter = Users.objects.get(phone_number=phone_number).entry_counter
+        time_now = datetime.datetime.now().strftime('%H')
+        if user is not None:
+            if int(time_with) < int(time_now) < int(time_to) or time_with == '' and time_to == '':
+                if int(entry_counter) > 0 or entry_counter == '':
+                    if entry_counter != '':
+                        count = int(entry_counter)
+                        count -= 1
+                        Users.objects.filter(phone_number=phone_number).update(entry_counter=count)
+                    # GPIO.setmod(GPIO.BCM)
+                    # GPIO.setup(24, GPIO.OUT)
+                    # GPIO.output(7, True)
+                    # sleep(0.5)
+                    # GPIO.output(7, False)
+                    # GPIO.cleanup()
+                    print("test passed")
 
+        else:
+            print('заглушка: нет в списке')
 
     def get(self, request):
         if request.GET.get('delete_from_sms') == 'del':
             self.delete_from_sms(request)
-        if request.GET.get('open_from_sms') == 'open':
+        if request.GET.get('open_from_phone') == 'open':
             self.open_from_sms(request)
         users = Users.objects.all()
         delete_button_id = request.GET.get('delete_button_id')
@@ -27,6 +50,8 @@ class UserView(View):
         return render(request, 'home/index.html', {'users': users, 'add_user': UserForm})
 
     def post(self, request):
+        print(request.POST)
+        print(request.POST.get('sms_add_user'))
         users = Users.objects.all()
         phone_number = str(request.POST.get("phone_number"))
         firstname = str(request.POST.get("firstname"))
@@ -35,7 +60,7 @@ class UserView(View):
         start_time = str(request.POST.get("start_time"))
         end_time = str(request.POST.get("end_time"))
         check_number = re.match(r'^[+]{1}[0-9]{11}$', phone_number)
-        if check_number == None:
+        if check_number is None:
             return render(request, 'home/index.html',
                           {'users': users,
                            'add_user': UserForm,
